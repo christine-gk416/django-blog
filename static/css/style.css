@@ -29,6 +29,10 @@ body {
     background-color: #F9FAFC;
 }
 
+.background-test {
+    background-image: url("/media/images/cairn-terrier-in-grass-flowers_shutterstock_OlgaOvcharenko-.jpg");
+}
+
 .card {
     border: none;
     background-color: transparent;
