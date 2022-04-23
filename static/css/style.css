@@ -30,7 +30,9 @@ body {
 }
 
 .background-test {
-    background-image: url("/media/images/cairn-terrier-in-grass-flowers_shutterstock_OlgaOvcharenko-.jpg");
+    background-image: url("../media/images/cairn-terrier-in-grass-flowers_shutterstock_OlgaOvcharenko-.jpg");
+    background-size: cover;
+    height: calc(100vh - 164px);
 }
 
 .card {
