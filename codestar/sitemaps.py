@@ -10,8 +10,8 @@ class Article_Sitemap(Sitemap):
     def items(self):
         return Post.objects.all()
 
-    # def location(self, obj):
-    #     return obj.note_full_path
+    # def location(self, slug):
+    #     return reverse(slug)
 
     def lastmod(self, obj): 
         return obj.updated_on
