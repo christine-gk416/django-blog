@@ -19,6 +19,8 @@ class Post(models.Model):
     status = models.IntegerField(choices=STATUS, default=0)
     likes = models.ManyToManyField(
         User, related_name='blogpost_like', blank=True)
+    dislikes = models.ManyToManyField(
+        User, related_name='blogpost_dislike', blank=True)
 
     class Meta:
         ordering = ["-created_on"]
@@ -28,6 +30,9 @@ class Post(models.Model):
 
     def number_of_likes(self):
         return self.likes.count()
+
+    def number_of_dislikes(self):
+        return self.dislikes.count()
 
     def get_absolute_url(self):
         return f"/post/{self.slug}/"
@@ -46,3 +51,15 @@ class Comment(models.Model):
 
     def __str__(self):
         return f"Comment {self.body} by {self.name}"
+
+
+# Extending User Model Using a One-To-One Link
+class Profile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    name = models.CharField(max_length=100, default='Test')
+    bio = models.TextField()
+    avatar = models.ImageField(default='default.jpg', upload_to='profile_images')
+    
+
+    def __str__(self):
+        return self.user.username

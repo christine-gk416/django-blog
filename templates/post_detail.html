@@ -65,16 +65,17 @@
                                 <!-- Check if authenticated user has liked the post and show filled in heart -->
                                 {% if liked %}
                                 <button type="submit" name="blogpost_id" value="{{post.slug}}" class="btn-like">
-                                    <i class="fas fa-heart"></i>
+                                    <i class="fas fa-angle-up text-success"></i>
                                 </button>
                                 {% else %}
                                 <!-- Check if authenticated user has not liked the post and show empty heart -->
                                 <button type="submit" name="blogpost_id" value="{{post.slug}}" class="btn-like">
-                                    <i class="far fa-heart"></i>
+                                    <i class="fas fa-angle-up text-secondary"></i>
                                 </button>
 
                                 {% endif %}
                             </form>
+                            
 
                             <!-- If user is not authenticated, show empty heart -->
 
@@ -90,9 +91,44 @@
                             <!-- Show like counter whether logged in or not -->
 
                             <span class="text-secondary">
-                                {{ post.number_of_likes }}
+                                {{ post.number_of_likes }} <h1></h1>
+                            </span>
+                            
+
+                        </strong>
+
+                        <strong>
+                            {% if user.is_authenticated %}
+                            <form action="{% url 'post_dislike' post.slug %}" method="POST" class="d-inline">
+                                {% csrf_token %}
+                                <!-- Check if authenticated user has disliked the post and show filled in heart -->
+                                {% if disliked %}
+                                <button type="submit" name="blogpost_id" value="{{post.slug}}" class="btn-like">
+                                    <i class="fas fa-angle-down text-danger"></i>
+                                </button>
+                                {% else %}
+                                <!-- Check if authenticated user has not liked the post and show empty heart -->
+                                <button type="submit" name="blogpost_id" value="{{post.slug}}" class="btn-like">
+                                    <i class="fas fa-angle-down text-secondary"></i>
+                                </button>
+
+                                {% endif %}
+                            </form>
+
+                            {% else %}
+
+                            <span class="text-secondary">
+                                <i class="far fa-heart"></i>
                             </span>
 
+
+                            {% endif %}
+
+                            <!-- Show like counter whether logged in or not -->
+
+                            <span class="text-secondary">
+                                {{ post.number_of_dislikes }} <h1></h1>
+                            </span>
                         </strong>
                         <!-- <strong class="text-secondary"><i class="far fa-heart"></i> {{ post.number_of_likes }}</strong> -->
                     </div>
