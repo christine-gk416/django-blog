@@ -140,6 +140,11 @@ body {
     background: transparent;
 }
 
+.account-img {
+    height: auto;
+    width: 25%;
+}
+
 /* .btn-like:hover,
 .btn-like:active {
     color: #E84610;

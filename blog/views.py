@@ -1,11 +1,15 @@
-from django.shortcuts import render, get_object_or_404, reverse
+from django.shortcuts import render, get_object_or_404, reverse, redirect
 from django.views import generic, View
 from django.http import HttpResponseRedirect
 from django.views.generic.edit import FormView
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.urls import reverse_lazy
+from django.contrib.auth.views import PasswordChangeView
+from django.contrib.messages.views import SuccessMessageMixin
 
 from .models import Post, Profile
-from .forms import CommentForm
+from .forms import CommentForm, UpdateUserForm, UpdateProfileForm
 
 
 class PostList(generic.ListView):
@@ -111,7 +115,31 @@ class PostDisike(View):
 def profile(request):
 
     user_profile = get_object_or_404(Profile, user=request.user)
+
+    if request.method == 'POST':
+        user_form = UpdateUserForm(request.POST, instance=request.user)
+        profile_form = UpdateProfileForm(request.POST, request.FILES, instance=request.user.profile)
+
+        if user_form.is_valid() and profile_form.is_valid():
+            user_form.save()
+            profile_form.save()
+            messages.success(request, 'Your profile is updated successfully')
+            return redirect(to='users-profile')
+    else:
+        user_form = UpdateUserForm(instance=request.user)
+        profile_form = UpdateProfileForm(instance=request.user.profile)
+
+
     context = {
-        'user_profile': user_profile
+        'user_profile': user_profile,
+        'user_form': user_form, 
+        'profile_form': profile_form
     }
+
     return render(request, 'profile.html', context)
+
+
+class ChangePasswordView(SuccessMessageMixin, PasswordChangeView):
+    template_name = 'change_password.html'
+    success_message = "Successfully Changed Your Password"
+    success_url = reverse_lazy('users-home')

@@ -3,11 +3,12 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 from . import views
-from .views import profile
+from .views import profile, ChangePasswordView
 
 urlpatterns = [
     path('', views.PostList.as_view(), name='home'),
     path('profile/', profile, name='users-profile'),
+    path('password-change/', ChangePasswordView.as_view(), name='password_change'),
     path('<slug:slug>/', views.PostDetail.as_view(), name='post_detail'),
     path('like/<slug:slug>/', views.PostLike.as_view(), name='post_like'),
     path('dislike/<slug:slug>/', views.PostDisike.as_view(), name='post_dislike'),
