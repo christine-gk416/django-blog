@@ -35,7 +35,6 @@ X_FRAME_ORIGINS = 'SAMEORGIN'
 
 ALLOWED_HOSTS = ['codestar416.herokuapp.com', 'localhost']
 
-
 # Application definition
 
 INSTALLED_APPS = [
