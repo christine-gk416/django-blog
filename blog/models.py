@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.template.defaultfilters import slugify
 from PIL import Image
 
 from cloudinary.models import CloudinaryField
@@ -41,11 +42,28 @@ class Post(models.Model):
     def get_absolute_url(self):
         return f"/post/{self.slug}/"
 
+    def save(self, *args, **kwargs):  # new
+        if not self.slug:
+            self.slug = slugify(self.title)
+        return super().save(*args, **kwargs)
+
 class Comment(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE,
                              related_name="comments")
     name = models.CharField(max_length=80)
     email = models.EmailField()
+    class Months(models.TextChoices):
+        JANUARY = 'JAN', 'January'
+        FEBRUARY = 'FEB', 'February'
+        MARCH = 'MAR', 'March'
+        APRIL = 'APR', 'April'
+        MAY = 'MAY', 'May'
+
+    month = models.CharField(
+        max_length=3,
+        choices=Months.choices,
+        default=Months.APRIL 
+    )
     body = models.TextField()
     created_on = models.DateTimeField(auto_now_add=True)
     approved = models.BooleanField(default=False)

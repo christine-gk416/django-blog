@@ -1,7 +1,9 @@
 from django.shortcuts import render, get_object_or_404, reverse, redirect
 from django.views import generic, View
 from django.http import HttpResponseRedirect
-from django.views.generic.edit import FormView
+from django.views.generic.list import ListView
+from django.views.generic.detail import DetailView
+from django.views.generic.edit import CreateView
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse_lazy
@@ -12,14 +14,23 @@ from .models import Post, Profile
 from .forms import CommentForm, UpdateUserForm, UpdateProfileForm
 
 
-class PostList(generic.ListView):
+class PostList(ListView):
     model = Post()
     queryset = Post.objects.filter(status=1).order_by('likes')
     template_name = 'index.html'
     paginate_by = 6
 
 
-class PostDetail(View):
+class PostCreateView(CreateView):
+    model = Post
+    fields = ['title', 'featured_image', 'excerpt', 'content', 'status']
+
+    def form_valid(self, form):
+        form.instance.author = self.request.user
+        return super().form_valid(form)
+
+
+class PostDetail(DetailView):
 
     def get(self, request, slug, *args, **kwargs):
         queryset = Post.objects.filter(status=1)
@@ -33,7 +44,7 @@ class PostDetail(View):
             disliked = True
 
         return render (
-            request, 'post_detail.html', 
+            request, 'post.html', 
             {
                 'post': post,
                 'comments': comments,
@@ -67,7 +78,7 @@ class PostDetail(View):
             comment_form = CommentForm()
 
         return render (
-            request, 'post_detail.html', 
+            request, 'post.html', 
             {
                 'post': post,
                 'comments': comments,
@@ -92,7 +103,7 @@ class PostLike(View):
         # else:
         #     post.dislikes.add(request.user)
 
-        return HttpResponseRedirect(reverse('post_detail', args=[slug]))
+        return HttpResponseRedirect(reverse('post', args=[slug]))
 
 class PostDisike(View):
     def post(self, request, slug):
@@ -108,7 +119,7 @@ class PostDisike(View):
         else:
             post.dislikes.add(request.user)
 
-        return HttpResponseRedirect(reverse('post_detail', args=[slug]))
+        return HttpResponseRedirect(reverse('post', args=[slug]))
 
 
 @login_required

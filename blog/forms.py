@@ -7,7 +7,7 @@ from .models import Comment, Profile
 class CommentForm(forms.ModelForm):
     class Meta:
         model = Comment
-        fields = ('body',)
+        fields = ('body', 'month')
 
 
 class UpdateUserForm(forms.ModelForm):
