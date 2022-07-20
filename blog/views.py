@@ -3,7 +3,7 @@ from django.views import generic, View
 from django.http import HttpResponseRedirect
 from django.views.generic.list import ListView
 from django.views.generic.detail import DetailView
-from django.views.generic.edit import CreateView
+from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse_lazy
@@ -23,11 +23,23 @@ class PostList(ListView):
 
 class PostCreateView(CreateView):
     model = Post
-    fields = ['title', 'featured_image', 'excerpt', 'content', 'status']
+    fields = ['title', 'status', 'featured_image', 'excerpt', 'content']
+    template_name_suffix = '_create_form'
 
     def form_valid(self, form):
         form.instance.author = self.request.user
         return super().form_valid(form)
+
+
+class PostUpdateView(UpdateView):
+    model = Post
+    fields = ['title', 'status', 'featured_image', 'excerpt', 'content']
+    template_name_suffix = '_update_form'
+
+
+class PostDeleteView(DeleteView):
+    model = Post
+    success_url = reverse_lazy('home')
 
 
 class PostDetail(DetailView):

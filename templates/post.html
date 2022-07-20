@@ -48,6 +48,13 @@
     <div class="row">
         <div class="col card mb-4  mt-3 left  top">
             <div class="card-body">
+
+                {% if request.user.is_superuser %}
+
+                <a type="button" class="btn btn-primary" href="{% url 'update_post' post.slug %}">Edit post</a>
+                <a type="button" class="btn btn-danger" href="{% url 'delete_post' post.slug %}">Delete post</a>
+
+                {% endif %}
                 <!-- The post content goes inside the card-text. -->
                 {{ post.content | safe }}
                 <!-- Use the | safe filter inside the template tags -->
