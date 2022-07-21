@@ -45,7 +45,7 @@ class PostDeleteView(DeleteView):
 class PostDetail(DetailView):
 
     def get(self, request, slug, *args, **kwargs):
-        queryset = Post.objects.filter(status=1)
+        queryset = Post.objects.all()
         post = get_object_or_404(queryset, slug=slug)
         comments = post.comments.filter(approved=True).order_by('created_on')
         liked = False
@@ -99,6 +99,14 @@ class PostDetail(DetailView):
                 'comment_form': CommentForm(),
             },
         )
+
+
+class DraftList(ListView):
+    model = Post()
+    queryset = Post.objects.filter(status=0).order_by('created_on')
+    template_name = 'post_draft.html'
+    context_object_name = 'draft_list'
+    paginate_by = 6
 
 
 class PostLike(View):
