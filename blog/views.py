@@ -14,6 +14,7 @@ from .models import Post, Profile
 from .forms import CommentForm, UpdateUserForm, UpdateProfileForm
 
 
+""" Listview """
 class PostList(ListView):
     model = Post()
     queryset = Post.objects.filter(status=1).order_by('likes')
@@ -21,6 +22,16 @@ class PostList(ListView):
     paginate_by = 6
 
 
+""" Listview (drafts) """
+class DraftList(ListView):
+    model = Post()
+    queryset = Post.objects.filter(status=0).order_by('created_on')
+    template_name = 'post_draft.html'
+    context_object_name = 'object_list'
+    paginate_by = 6
+
+
+""" Createview """
 class PostCreateView(CreateView):
     model = Post
     fields = ['title', 'status', 'featured_image', 'excerpt', 'content']
@@ -31,18 +42,37 @@ class PostCreateView(CreateView):
         return super().form_valid(form)
 
 
+""" Updateview """
 class PostUpdateView(UpdateView):
     model = Post
     fields = ['title', 'status', 'featured_image', 'excerpt', 'content']
     template_name_suffix = '_update_form'
+    
 
 
+""" Deleteview """
 class PostDeleteView(DeleteView):
     model = Post
     success_url = reverse_lazy('home')
 
 
+@login_required
+def delete_post(request, slug):
+    """ Delete a blog post """
+    if not request.user.is_superuser:
+        messages.error(request, 'Sorry, only blog admins can do that.')
+        return redirect(reverse('home'))
+
+    post = get_object_or_404(Post, slug=slug)
+    post.delete()
+    messages.success(request, 'Post deleted!')
+    return redirect(reverse('home'))
+
+
+""" Detailview """
 class PostDetail(DetailView):
+
+    template_name = 'post.html'
 
     def get(self, request, slug, *args, **kwargs):
         queryset = Post.objects.all()
@@ -68,7 +98,7 @@ class PostDetail(DetailView):
         )
 
     def post(self, request, slug, *args, **kwargs):
-        queryset = Post.objects.filter(status=1)
+        queryset = Post.objects.all()
         post = get_object_or_404(queryset, slug=slug)
         comments = post.comments.filter(approved=True).order_by('created_on')
         liked = False
@@ -99,14 +129,6 @@ class PostDetail(DetailView):
                 'comment_form': CommentForm(),
             },
         )
-
-
-class DraftList(ListView):
-    model = Post()
-    queryset = Post.objects.filter(status=0).order_by('created_on')
-    template_name = 'post_draft.html'
-    context_object_name = 'draft_list'
-    paginate_by = 6
 
 
 class PostLike(View):
@@ -174,6 +196,3 @@ class ChangePasswordView(SuccessMessageMixin, PasswordChangeView):
     template_name = 'change_password.html'
     success_message = "Successfully Changed Your Password"
     success_url = reverse_lazy('users-home')
-
-
-    
