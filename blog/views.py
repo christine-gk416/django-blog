@@ -11,7 +11,7 @@ from django.contrib.auth.views import PasswordChangeView
 from django.contrib.messages.views import SuccessMessageMixin
 
 from .models import Post, Profile
-from .forms import CommentForm, UpdateUserForm, UpdateProfileForm
+from .forms import CommentForm, UpdateUserForm, UpdateProfileForm, PostForm
 
 
 """ Listview """
@@ -34,7 +34,7 @@ class DraftList(ListView):
 """ Createview """
 class PostCreateView(CreateView):
     model = Post
-    fields = ['title', 'status', 'featured_image', 'excerpt', 'content']
+    form_class = PostForm
     template_name_suffix = '_create_form'
 
     def form_valid(self, form):
@@ -45,7 +45,7 @@ class PostCreateView(CreateView):
 """ Updateview """
 class PostUpdateView(UpdateView):
     model = Post
-    fields = ['title', 'status', 'featured_image', 'excerpt', 'content']
+    form_class = PostForm
     template_name_suffix = '_update_form'
     
 

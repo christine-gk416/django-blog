@@ -1,7 +1,8 @@
 from django import forms
 from django.contrib.auth.models import User
+from django_summernote.widgets import SummernoteWidget, SummernoteInplaceWidget
 
-from .models import Comment, Profile
+from .models import Comment, Profile, Post
 
 
 class CommentForm(forms.ModelForm):
@@ -20,6 +21,20 @@ class UpdateUserForm(forms.ModelForm):
     class Meta:
         model = User
         fields = ['username', 'email']
+
+
+class PostForm(forms.ModelForm):
+   
+    class Meta:
+        model = Post
+        fields = (
+            'title', 'status', 'featured_image', 'excerpt', 'content'
+            )
+        widgets = {
+            'excerpt': SummernoteWidget(),
+            'content': SummernoteWidget()
+        }
+
 
 
 class UpdateProfileForm(forms.ModelForm):
